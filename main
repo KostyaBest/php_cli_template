@@ -1,0 +1,46 @@
+#!/usr/bin/php
+<?php
+
+if(php_sapi_name() !== 'cli'){
+    exit;
+}
+
+
+define('hello',function(array $request):void 
+{
+    echo "Hello\n";
+});
+define('help',function(array $request):void
+{
+    echo("#########HELP#############\n");
+    echo("hello - prints hello\n");
+    echo("##########################\n");
+});
+
+class App
+{
+    private static array $commands=[
+                        'hello' => hello,
+                        'help'=>help
+                    ];
+
+    public function runCommand(array $argv)
+    {
+        if(!isset($argv[1]))
+        {
+            App::$commands['help']([]);
+            return;
+        }
+        if(App::$commands[$argv[1]])
+
+        {
+            App::$commands[$argv[1]](array_slice($argv,1));
+            return;
+        }
+        App::$commands['help']([]);
+        return;
+    }
+}
+
+$app = new App();
+$app->runCommand($argv);
